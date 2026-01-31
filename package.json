@@ -1,7 +1,7 @@
 {
   "name": "shortlink-monorepo",
   "description": "Monorepo for Shortlink application",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "scripts": {
     "dev:web": "pnpm --filter shortlink-web run dev",
     "build:web": "pnpm --filter shortlink-web run build",

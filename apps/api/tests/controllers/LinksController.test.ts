@@ -191,7 +191,7 @@ describe("LinksController", () => {
 
       const response = await controller.redirectLink(event);
 
-      expect(response.statusCode).toBe(301);
+      expect(response.statusCode).toBe(302);
       expect(response.headers?.Location).toBe("https://example.com");
     });
 
