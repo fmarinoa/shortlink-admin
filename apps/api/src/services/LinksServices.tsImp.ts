@@ -31,18 +31,18 @@ export class LinksServicesImp implements ILinksServices {
     const result = await this.repository.getLink(slug);
 
     if (!result.isSuccess) {
-      console.error("Error retrieving link:", result.getErrorValue());
+      console.error(`Error retrieving link with slug ${slug}:`, result.getErrorValue());
       return Result.fail(portfolioUrl);
     }
 
     const newVisitCount = await this.repository.incrementLinkVisitCount(slug);
     if (!newVisitCount.isSuccess) {
       console.error(
-        "Error incrementing visit count:",
+        `Error incrementing visit count for slug ${slug}:`,
         newVisitCount.getErrorValue(),
       );
     }
-    console.log("Updated visit count:", newVisitCount.getValue());
+    console.log(`Link with slug ${slug} updated visit count: ${newVisitCount.getValue()}`);
 
     return Result.ok(result.getValue().url);
   }

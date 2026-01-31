@@ -4,7 +4,7 @@ import { ILinksServices } from "@/services/ILinksServices";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 export class LinksController {
-  constructor(private readonly linksService: ILinksServices) {}
+  constructor(private readonly linksService: ILinksServices) { }
 
   async createLink(
     event: APIGatewayProxyEvent,
@@ -61,23 +61,26 @@ export class LinksController {
     event: APIGatewayProxyEvent,
   ): Promise<APIGatewayProxyResult> {
     const { slug } = event.pathParameters || {};
-    const body = "";
+    const buildRedirectResponse = (location: string) => {
+      return {
+        statusCode: 302,
+        headers: {
+          Location: location,
+          "Cache-Control": "no-cache, no-store, must-revalidate",
+          "Pragma": "no-cache",
+          "Expires": "0"
+        },
+        body: "",
+      };
+    }
 
     const result = await this.linksService.redirectLink(slug);
 
     if (!result.isSuccess) {
-      return {
-        statusCode: 302,
-        headers: { Location: result.getErrorValue() },
-        body,
-      };
+      return buildRedirectResponse(result.getErrorValue());
     }
 
-    return {
-      statusCode: 301,
-      headers: { Location: result.getValue() },
-      body,
-    };
+    return buildRedirectResponse(result.getValue());
   }
 
   async getAllLinks(
