@@ -2,6 +2,7 @@
 
 Monorepo completo para la aplicación Shortlink - un acortador de URLs moderno y escalable construido con tecnologías serverless en AWS.
 
+[![Deploy to API Production](https://github.com/fmarinoa/shortlink-monorepo/actions/workflows/deploy-api.yml/badge.svg)](https://github.com/fmarinoa/shortlink-monorepo/actions/workflows/deploy-api.yml)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
 [![pnpm](https://img.shields.io/badge/pnpm-workspace-orange)](https://pnpm.io/)

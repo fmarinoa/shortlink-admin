@@ -2,7 +2,6 @@
 
 API serverless para crear y gestionar enlaces cortos (URL shortener) construida con AWS Lambda, DynamoDB y TypeScript.
 
-[![Deploy to Production](https://github.com/fmarinoa/shortlink-api/actions/workflows/cd.yml/badge.svg)](https://github.com/fmarinoa/shortlink-api/actions/workflows/cd.yml)
 [![License: ISC](https://img.shields.io/badge/License-ISC-blue.svg)](https://opensource.org/licenses/ISC)
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D20-brightgreen)](https://nodejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-blue)](https://www.typescriptlang.org/)
