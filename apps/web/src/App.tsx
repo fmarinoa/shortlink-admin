@@ -6,8 +6,7 @@ import SetApiKey from "./components/SetApiKey";
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
 import LinkTable from "./components/LinkTable";
-import CreateEditModal from "./components/CreateEditModal";
-import DeleteModal from "./components/DeleteModal";
+import LinkModal from "./components/LinkModal";
 import Toast from "./components/Toast";
 import { copyToClipboard, getErrorMessage } from "./utils";
 
@@ -17,7 +16,9 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<"create" | "edit" | "delete">(
+    "create",
+  );
   const [editingLink, setEditingLink] = useState<LinkType | null>(null);
   const [deletingLink, setDeletingLink] = useState<LinkType | null>(null);
   const [showToast, setShowToast] = useState(false);
@@ -50,19 +51,26 @@ function App() {
   const handleOpenCreate = () => {
     setEditingLink(null);
     setFormData({ slug: "", url: "" });
+    setModalMode("create");
     setIsModalOpen(true);
   };
 
   const handleOpenEdit = (link: LinkType) => {
     setEditingLink(link);
     setFormData({ slug: link.slug, url: link.url });
+    setModalMode("edit");
     setIsModalOpen(true);
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (editingLink) {
+      if (modalMode === "delete") {
+        if (!deletingLink) return;
+        await deleteLink.mutateAsync(deletingLink.slug);
+        showToastMessage("✅ Link eliminado correctamente", "success");
+        setDeletingLink(null);
+      } else if (modalMode === "edit" && editingLink) {
         await updateLink.mutateAsync({
           slug: editingLink.slug,
           data: { url: formData.url },
@@ -77,7 +85,9 @@ function App() {
       console.error("Error saving link", err);
       const errorMessage = getErrorMessage(
         err as { response?: { status: number } },
-        "Error al guardar el link",
+        modalMode === "delete"
+          ? "Error al eliminar el link"
+          : "Error al guardar el link",
       );
       showToastMessage(errorMessage, "error");
     }
@@ -87,25 +97,9 @@ function App() {
     const linkToDelete = allLinks.find((link) => link.slug === slug);
     if (linkToDelete) {
       setDeletingLink(linkToDelete);
-      setIsDeleteModalOpen(true);
-    }
-  };
-
-  const handleConfirmDelete = async () => {
-    if (!deletingLink) return;
-
-    try {
-      await deleteLink.mutateAsync(deletingLink.slug);
-      showToastMessage("✅ Link eliminado correctamente", "success");
-      setIsDeleteModalOpen(false);
-      setDeletingLink(null);
-    } catch (err: unknown) {
-      console.error("Error deleting link", err);
-      const errorMessage = getErrorMessage(
-        err as { response?: { status: number } },
-        "Error al eliminar el link",
-      );
-      showToastMessage(errorMessage, "error");
+      setFormData({ slug: linkToDelete.slug, url: linkToDelete.url });
+      setModalMode("delete");
+      setIsModalOpen(true);
     }
   };
 
@@ -134,29 +128,19 @@ function App() {
         }}
       />
 
-      <CreateEditModal
+      <LinkModal
         isOpen={isModalOpen}
-        editingLink={editingLink}
+        mode={modalMode}
         formData={formData}
-        isLoading={createLink.isPending || updateLink.isPending}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleSubmit}
-        onFormDataChange={setFormData}
-      />
-
-      <DeleteModal
-        isOpen={isDeleteModalOpen}
-        formData={
-          deletingLink
-            ? { slug: deletingLink.slug, url: deletingLink.url }
-            : { slug: "", url: "" }
+        isLoading={
+          createLink.isPending || updateLink.isPending || deleteLink.isPending
         }
-        isLoading={deleteLink.isPending}
         onClose={() => {
-          setIsDeleteModalOpen(false);
+          setIsModalOpen(false);
           setDeletingLink(null);
         }}
-        onDelete={handleConfirmDelete}
+        onSubmit={handleSubmit}
+        onFormDataChange={setFormData}
       />
 
       {isModalApiKeyOpen && (
