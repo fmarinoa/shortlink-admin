@@ -31,7 +31,10 @@ export class LinksServicesImp implements ILinksServices {
     const result = await this.repository.getLink(slug);
 
     if (!result.isSuccess) {
-      console.error(`Error retrieving link with slug ${slug}:`, result.getErrorValue());
+      console.error(
+        `Error retrieving link with slug ${slug}:`,
+        result.getErrorValue(),
+      );
       return Result.fail(portfolioUrl);
     }
 
@@ -42,7 +45,9 @@ export class LinksServicesImp implements ILinksServices {
         newVisitCount.getErrorValue(),
       );
     }
-    console.log(`Link with slug ${slug} updated visit count: ${newVisitCount.getValue()}`);
+    console.log(
+      `Link with slug ${slug} updated visit count: ${newVisitCount.getValue()}`,
+    );
 
     return Result.ok(result.getValue().url);
   }

@@ -4,7 +4,7 @@ import { ILinksServices } from "@/services/ILinksServices";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 export class LinksController {
-  constructor(private readonly linksService: ILinksServices) { }
+  constructor(private readonly linksService: ILinksServices) {}
 
   async createLink(
     event: APIGatewayProxyEvent,
@@ -67,12 +67,12 @@ export class LinksController {
         headers: {
           Location: location,
           "Cache-Control": "no-cache, no-store, must-revalidate",
-          "Pragma": "no-cache",
-          "Expires": "0"
+          Pragma: "no-cache",
+          Expires: "0",
         },
         body: "",
       };
-    }
+    };
 
     const result = await this.linksService.redirectLink(slug);
 

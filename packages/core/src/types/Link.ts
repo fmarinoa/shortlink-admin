@@ -8,4 +8,4 @@ export type LinkType = {
 export type LinksResponse = {
   total: number;
   data: LinkType[];
-}
+};
