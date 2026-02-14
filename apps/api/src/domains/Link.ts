@@ -23,6 +23,7 @@ export class Link {
   url!: string
   creationDate!: number;
   lastUpdateDate!: number;
+  lastVisitDate!: number;
   visitCount!: number;
 
   constructor(object?: Partial<Link>) {

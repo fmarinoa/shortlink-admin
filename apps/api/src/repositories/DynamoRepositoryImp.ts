@@ -113,24 +113,32 @@ export class DynamoRepositoryImp implements Repository {
     }
   }
 
-  async update(link: Link): Promise<Result<Link, Error>> {
+  async update(link: Link, opts?: { lastUpdateDate?: boolean, lastVisitDate?: boolean }): Promise<Result<Link, Error>> {
     try {
-      const request = new Link({ ...link, lastUpdateDate: Date.now() });
+      const shouldUpdateLastDate = opts?.lastUpdateDate ?? true;
+      const shouldUpdateLastVisitDate = opts?.lastVisitDate ?? false;
+      const request = new Link({
+        ...link,
+        ...(shouldUpdateLastDate && { lastUpdateDate: Date.now() }),
+        ...(shouldUpdateLastVisitDate && { lastVisitDate: Date.now() })
+      });
 
       await dynamoClient.send(
         new UpdateCommand({
           TableName: this.props.tableName,
           Key: { slug: request.slug },
           UpdateExpression:
-            "SET #url = :url, #lastUpdateDate = :lastUpdateDate, #visitCount = :visitCount",
+            "SET #url = :url, #lastUpdateDate = :lastUpdateDate, #lastVisitDate = :lastVisitDate, #visitCount = :visitCount",
           ExpressionAttributeNames: {
             "#url": "url",
             "#lastUpdateDate": "lastUpdateDate",
+            "#lastVisitDate": "lastVisitDate",
             "#visitCount": "visitCount",
           },
           ExpressionAttributeValues: {
             ":url": request.url,
             ":lastUpdateDate": request.lastUpdateDate,
+            ":lastVisitDate": request.lastVisitDate,
             ":visitCount": request.visitCount,
           },
           ConditionExpression: "attribute_exists(slug)",
