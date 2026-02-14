@@ -106,7 +106,7 @@ export class LinksServiceImp implements LinksService {
       });
     }
 
-    result = await this.props.repository.update(oldLink);
+    result = await this.props.repository.update(updateResult.getValue().link);
     if (!result.isSuccess) {
       return Result.fail(result.getErrorValue());
     }
@@ -114,7 +114,7 @@ export class LinksServiceImp implements LinksService {
     const newLink = result.getValue();
     return Result.ok({
       slug: newLink.slug,
-      url: newUrl as string,
+      url: newLink.url,
       shortUrl: `${this.props.apiUrl}/${newLink.slug}`,
     });
   }
